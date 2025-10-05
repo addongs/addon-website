@@ -10,5 +10,7 @@ export default defineConfig({
     server: {
     host: '0.0.0.0', // explicitly expose network
     port: 5173
-  }
+  },
+    base: '/addon-website/', // <-- tells Vite the site is under this subpath
+
 });

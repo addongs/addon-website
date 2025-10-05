@@ -5,15 +5,14 @@ import { TestimonialsSection } from '../components/TestimonialsSection';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { createDataService } from '../services/dataService';
 import { DATA_REPO_CONFIG } from '../config';
-import { Project, Category, Testimonial,Service } from '../types';
+import { Project, Category, Testimonial, Service } from '../types';
 import { StatsSection } from '../components/StatsSection';
-
-
 
 export const Home = ({ services }: { services: Service[] }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [stats, setStats] = useState<{ label: string; value: number }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,16 +25,17 @@ export const Home = ({ services }: { services: Service[] }) => {
           DATA_REPO_CONFIG.branch
         );
 
-        const [projectsData, categoriesData, testimonialsData] = await Promise.all([
-          dataService.getProjects(),
-          dataService.getCategories(),
-          dataService.getTestimonials(),
-          dataService.getServices()
-        ]);
-
+        const [projectsData, categoriesData, testimonialsData, statsData] =
+          await Promise.all([
+            dataService.getProjects(),
+            dataService.getCategories(),
+            dataService.getTestimonials(),
+            dataService.getStats(), // fetch stats from JSON
+          ]);            
         setProjects(projectsData);
         setCategories(categoriesData);
         setTestimonials(testimonialsData);
+        setStats(statsData);
       } catch (err) {
         setError('Failed to load content. Please try again later.');
         console.error('Error loading data:', err);
@@ -64,18 +64,10 @@ export const Home = ({ services }: { services: Service[] }) => {
       </div>
     );
 
-
   return (
     <div id="home">
-      <StatsSection
- stats={[
-  { label: 'Completed Projects', value: 120 },
-  { label: 'Happy Customers', value: 85 },
-  { label: 'Years of Experience', value: 17},
-]}
-
-/>
-<ProjectsSection projects={projects} categories={categories} />
+      <StatsSection stats={stats} />
+      <ProjectsSection projects={projects} categories={categories} />
       <ServicesSection services={services} />
       <TestimonialsSection testimonials={testimonials} />
     </div>

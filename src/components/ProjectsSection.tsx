@@ -106,7 +106,7 @@ export const ProjectsSection = ({ projects, categories }: ProjectsSectionProps) 
 
             {/* Project Grid */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <AnimatePresence mode="wait">
+              <AnimatePresence>
                 {currentProjects.map((project, index) => (
                   <motion.div
                     key={project.id}
