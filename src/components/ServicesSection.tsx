@@ -78,9 +78,7 @@ export const ServicesSection = ({ services }: ServicesSectionProps) => {
           <p className="text-gray-600 mb-6">
             Don't see what you're looking for? We offer custom printing solutions.
           </p>
-          <button className="px-8 py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl">
-            Contact Us
-          </button>
+
         </motion.div>
       </div>
     </section>
