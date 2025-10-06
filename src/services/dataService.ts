@@ -15,15 +15,22 @@ export class DataService {
   }
 
   private getFileUrl(filePath: string): string {
-    return `${GITHUB_RAW_BASE_URL}/${this.repoOwner}/${this.repoName}/${this.branch}/${filePath}`;
+    // Add timestamp query param to make each request unique (bypass browser + CDN cache)
+    return `${GITHUB_RAW_BASE_URL}/${this.repoOwner}/${this.repoName}/${this.branch}/${filePath}?t=${Date.now()}`;
   }
 
   private async fetchCSV<T>(filePath: string): Promise<T[]> {
     try {
       const url = this.getFileUrl(filePath);
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Failed to fetch ${filePath}: ${response.statusText}`);
+
+      // ⚡ CORS-safe fetch
+      const response = await fetch(url, { cache: 'no-store' });
+
+      if (!response.ok)
+        throw new Error(`Failed to fetch ${filePath}: ${response.statusText}`);
+
       const csvText = await response.text();
+
       return new Promise((resolve, reject) => {
         Papa.parse<T>(csvText, {
           header: true,
@@ -41,8 +48,13 @@ export class DataService {
   private async fetchJSON<T>(filePath: string): Promise<T[]> {
     try {
       const url = this.getFileUrl(filePath);
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Failed to fetch ${filePath}: ${response.statusText}`);
+
+      // ⚡ CORS-safe fetch
+      const response = await fetch(url, { cache: 'no-store' });
+
+      if (!response.ok)
+        throw new Error(`Failed to fetch ${filePath}: ${response.statusText}`);
+
       return response.json() as Promise<T[]>;
     } catch (error) {
       console.error(`Error fetching JSON from ${filePath}:`, error);
